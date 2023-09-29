@@ -34,7 +34,7 @@ static block* req_mem(TYPEOF_SIZE size) {
 
 static block* header = NULL;
 
-void* alloc(TYPEOF_SIZE size) {
+void* allocm(TYPEOF_SIZE size) {
     if (size == 0) {
         return NULL;
     }
@@ -72,6 +72,23 @@ void* alloc(TYPEOF_SIZE size) {
     b->next = NULL;
     curr->next = b;
     return b->data;
+}
+
+void* callocm(TYPEOF_SIZE size) {
+    char* ptr = allocm(size);
+    if (ptr == NULL) {
+        return NULL;
+    }
+    #if IS_ALIGNED == true
+        size = align(size);
+    #endif
+    char* temp = ptr;
+    while (size) {
+        *temp = 0;
+        temp++;
+        size--;
+    }
+    return ptr;
 }
 
 void memcpym(void* dest, const void* src, TYPEOF_SIZE size) {
@@ -114,7 +131,7 @@ void* reallocm(void* ptr, TYPEOF_SIZE size) {
     if (ptr == NULL || size == 0) {
         return NULL;
     }
-    
+
     block* tofree = ptr-sizeof(block)+sizeof(intptr_t);
     TYPEOF_SIZE amtocpy = size;
     if (tofree->size < size) {
@@ -128,15 +145,3 @@ void* reallocm(void* ptr, TYPEOF_SIZE size) {
 
     return ptr;
 }
-
-/*int main() {
-    int* a = alloc(sizeof(int));
-    *a = 69;
-    int* b = alloc(sizeof(int));
-    *b = 420;
-    int c = 1;
-    memcpyf(a, b, c);
-    printf("%d\n", *a);
-    freem(b);
-    freem(a);
-}*/

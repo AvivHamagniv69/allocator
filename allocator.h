@@ -17,8 +17,12 @@
 
 void* alloc(TYPEOF_SIZE size);
 
+void* callocm(TYPEOF_SIZE size);
+
 void memcpym(void* dest, const void* src, TYPEOF_SIZE size);
 
 void freem(void* ptr);
+
+void* reallocm(void* ptr, TYPEOF_SIZE size);
 
 #endif
